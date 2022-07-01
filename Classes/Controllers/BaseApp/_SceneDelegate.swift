@@ -79,7 +79,7 @@ class _SceneDelegate: UIResponder, UIWindowSceneDelegate {
                      UIApplication.shared,
                      open: url,
                      sourceApplication: nil,
-                     annotation: [UIApplication.OpenURLOptionsKey.annotation]
+                     annotation: [UIApplication.OpenURLOptionsKey.annotation])
     }
 }
 #endif
