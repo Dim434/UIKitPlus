@@ -7,6 +7,8 @@ let package = Package(
     name: "UISwift",
 	platforms: [
 		.iOS("11.0"),
+        .macOS(.v10_11),
+        .tvOS(.v13)
 	],
     products: [
         .library(name: "UISwift", targets: ["UISwift"]),
