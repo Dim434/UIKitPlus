@@ -263,7 +263,7 @@ open class UVerificationCodeView: UIView, AnyDeclarativeProtocol, DeclarativePro
     }
 }
 
-extension VerificationCodeView: _Fontable {
+extension UVerificationCodeView: _Fontable {
     func _setFont(_ v: UIFont?) {
 		digitViews.forEach { $0.font(v: v) }
     }

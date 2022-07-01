@@ -132,15 +132,15 @@ open class UTextView: UITextView, AnyDeclarativeProtocol, DeclarativeProtocolInt
     // MARK: - Delegate Replication
     
     public typealias SimpleHandler = () -> Void
-    public typealias SimpleHandlerText = (TextView) -> Void
+    public typealias SimpleHandlerText = (UTextView) -> Void
     public typealias BoolHandler = () -> Bool
-    public typealias BoolHandlerText = (TextView) -> Bool
-    public typealias BoolHandlerTextRangeString = (TextView, NSRange, String) -> Bool
+    public typealias BoolHandlerText = (UTextView) -> Bool
+    public typealias BoolHandlerTextRangeString = (UTextView, NSRange, String) -> Bool
     public typealias BoolHandlerRangeString = (NSRange, String) -> Bool
-    public typealias BoolHandlerTextURLRange = (TextView, URL, NSRange) -> Bool
-    public typealias BoolHandlerTextURLRangeInteraction = (TextView, URL, NSRange, TextItemInteraction) -> Bool
-    public typealias BoolHandlerTextTextAttachmentRange = (TextView, NSTextAttachment, NSRange) -> Bool
-    public typealias BoolHandlerTextTextAttachmentRangeInteraction = (TextView, NSTextAttachment, NSRange, TextItemInteraction) -> Bool
+    public typealias BoolHandlerTextURLRange = (UTextView, URL, NSRange) -> Bool
+    public typealias BoolHandlerTextURLRangeInteraction = (UTextView, URL, NSRange, TextItemInteraction) -> Bool
+    public typealias BoolHandlerTextTextAttachmentRange = (UTextView, NSTextAttachment, NSRange) -> Bool
+    public typealias BoolHandlerTextTextAttachmentRangeInteraction = (UTextView, NSTextAttachment, NSRange, TextItemInteraction) -> Bool
     
     // MARK: textViewShouldBeginEditing
     
@@ -490,12 +490,12 @@ extension UTextView: _Keyboardable {
     }
     
     @discardableResult
-    public func inputView(_ view: (TextView) -> UIView) -> Self {
+    public func inputView(_ view: (UTextView) -> UIView) -> Self {
         inputView(view(self))
     }
     
     @discardableResult
-    public func inputAccessoryView(_ view: (TextView) -> UIView) -> Self {
+    public func inputAccessoryView(_ view: (UTextView) -> UIView) -> Self {
         inputAccessoryView(view(self))
     }
 }

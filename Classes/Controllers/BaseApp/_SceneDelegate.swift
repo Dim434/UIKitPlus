@@ -30,7 +30,7 @@ class _SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
         BaseApp.shared.mainScene._onConnect?(window)
     }
-
+    
     func sceneDidDisconnect(_ scene: UIScene) {
         BaseApp.shared.mainScene._onDisconnect?(window)
         // Called as the scene is being released by the system.
@@ -38,36 +38,48 @@ class _SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Release any resources associated with this scene that can be re-created the next time the scene connects.
         // The scene may re-connect later, as its session was not neccessarily discarded (see `application:didDiscardSceneSessions` instead).
     }
-
+    
     func sceneDidBecomeActive(_ scene: UIScene) {
         // Called when the scene has moved from an inactive state to an active state.
         // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
-        BaseApp.shared.mainScene._onBecomeActive?(self.window)
+        UIApplication.shared.delegate?.applicationDidBecomeActive?(UIApplication.shared)
     }
-
+    
     func sceneWillResignActive(_ scene: UIScene) {
         // Called when the scene will move from an active state to an inactive state.
         // This may occur due to temporary interruptions (ex. an incoming phone call).
-        BaseApp.shared.mainScene._onWillResignActive?(self.window)
+        UIApplication.shared.delegate?.applicationWillResignActive?(UIApplication.shared)
     }
-
+    
     func sceneWillEnterForeground(_ scene: UIScene) {
         // Called as the scene transitions from the background to the foreground.
         // Use this method to undo the changes made on entering the background.
-        BaseApp.shared.mainScene._onWillEnterForeground?(self.window)
-        BaseApp.shared.mainScene._onDidEnterBackground?(self.window)
+        UIApplication.shared.delegate?.applicationWillEnterForeground?(UIApplication.shared)
+        
     }
-
+    
     func sceneDidEnterBackground(_ scene: UIScene) {
         // Called as the scene transitions from the foreground to the background.
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
+        UIApplication.shared.delegate?.applicationDidEnterBackground?(UIApplication.shared)
     }
     
     func windowScene(_ windowScene: UIWindowScene, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
         BaseApp.shared.shortcuts
             .first { $0.item.type == shortcutItem.type }?
             .action?(completionHandler)
+    }
+    
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        guard let url = URLContexts.first?.url else {
+            return
+        }
+        UIApplication.shared.delegate?.application?(
+                     UIApplication.shared,
+                     open: url,
+                     sourceApplication: nil,
+                     annotation: [UIApplication.OpenURLOptionsKey.annotation]
     }
 }
 #endif
