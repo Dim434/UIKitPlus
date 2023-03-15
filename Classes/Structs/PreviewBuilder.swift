@@ -33,7 +33,7 @@ public class PreviewGroup {
 }
 
 @available(iOS 13.0, *)
-@resultBuilder public struct PreviewBuilder {
+@_functionBuilder public struct PreviewBuilder {
     public typealias Block = () -> PreviewBuilderItem
     
     /// Builds an empty preview from an block containing no statements, `{ }`.

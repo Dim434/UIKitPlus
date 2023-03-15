@@ -41,7 +41,7 @@ public protocol USectionBodyItemable {
     var sectionBodyItem: USectionBodyItem { get }
 }
 
-public struct MultipleSectionBodyItem: USectionBodyItemable, Hashable {
+public struct MultipleSectionBodyItem: USectionBodyItemable {
     public var identifier: AnyHashable { self.items.map { $0.identifier } }
     public var sectionBodyItem: USectionBodyItem { .multiple(self.items) }
     public let items: [USectionBodyItemable]
@@ -49,14 +49,6 @@ public struct MultipleSectionBodyItem: USectionBodyItemable, Hashable {
     public init(_ items: [USectionBodyItemable]) {
         self.items = items
     }
-
-	public static func == (lhs: MultipleSectionBodyItem, rhs: MultipleSectionBodyItem) -> Bool {
-		lhs.identifier == rhs.identifier
-	}
-
-	public func hash(into hasher: inout Hasher) {
-		hasher.combine(self.identifier)
-	}
 }
 
 // MARK: - USupplementable
@@ -223,17 +215,8 @@ public extension UItemable where Self: UItemableBuilder {
 	}
 }
 
-public protocol UItemableDrag {
-	var canDrag: Bool { get }
-}
-
-public extension UItemableDrag {
-	var canDrag: Bool { true }
-}
-
 public protocol UItemableDelegate {
     func willDisplay()
-	func didEndDisplay()
     func didSelect()
     func didDeselect()
     func didHighlight()
@@ -242,7 +225,6 @@ public protocol UItemableDelegate {
 
 public extension UItemableDelegate {
     func willDisplay() {}
-	func didEndDisplay() {}
     func didSelect() {}
     func didDeselect() {}
     func didHighlight() {}
@@ -309,3 +291,5 @@ public struct EmptyItem: USectionBodyItemable {
 
     public init() {}
 }
+
+

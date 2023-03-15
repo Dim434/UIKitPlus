@@ -41,11 +41,6 @@ public enum UCollectionState<T>: Equatable {
 		return true
 	}
 
-	public var isEmpty: Bool {
-		guard case .empty = self else { return false }
-		return true
-	}
-
     public static func == (lhs: UCollectionState<T>, rhs: UCollectionState<T>) -> Bool {
         switch (lhs, rhs) {
         case (.loading, .loading): return true
@@ -73,11 +68,11 @@ open class UCollection: UView {
         }
     }
 
-    public struct Section: Hashable {
-		public let identifier: USection.Identifier
-		public let header: USupplementable?
-		public let items: [UItemable]
-		public let footer: USupplementable?
+    struct Section: Hashable {
+		let identifier: USection.Identifier
+        let header: USupplementable?
+        let items: [UItemable]
+        let footer: USupplementable?
         
         init(_ section: USection) {
             self.identifier = section.identifier
@@ -105,15 +100,12 @@ open class UCollection: UView {
         case section(Changeset)
         case items(Changeset, Int)
     }
-
+    
     lazy var collectionView: UICollectionView = {
         let collectionView = self.configuration.collectionView
         collectionView.register(UCollectionDynamicCell.self)
         collectionView.dataSource = self
         collectionView.delegate = self
-		collectionView.dragDelegate = self
-		collectionView.dropDelegate = self
-		collectionView.prefetchDataSource = self
         collectionView.backgroundColor = .clear
         return collectionView
     }()
@@ -121,7 +113,7 @@ open class UCollection: UView {
     var collectionViewOriginalSize: CGSize {
         let size = self.collectionView.frame.size
         let contentInset = self.collectionView.contentInset
-		let safeInset = self.isSafeAreaIncluded ? self.collectionView.safeInsets : .zero
+        let safeInset = self.collectionView.safeInsets
         return CGSize(
             width: size.width - (contentInset.left + contentInset.right) - (safeInset.left + safeInset.right),
             height: size.height - (contentInset.top + contentInset.bottom) - (safeInset.top + safeInset.bottom)
@@ -132,7 +124,7 @@ open class UCollection: UView {
 		(self.collectionView.collectionViewLayout as? UICollectionViewFlowLayout)?.scrollDirection ?? .vertical
 	}
     
-    public private(set) var sections: [Section] = [] {
+    var sections: [Section] = [] {
         didSet { self.updateRegistration() }
     }
     
@@ -141,7 +133,6 @@ open class UCollection: UView {
     var isChanging = false
     var isInitialized = false
 	var reversed = false
-	var isSafeAreaIncluded = true
     
     let configuration: Configuration
     let items: [USectionItemable]
@@ -217,103 +208,47 @@ open class UCollection: UView {
     
     // MARK: - Handlers
     
-    var _willDisplay: ((UICollectionView, UICollectionViewCell, IndexPath) -> Void)?
+    var _willDisplay: ((IndexPath) -> Void)?
     
-    public func onWillDisplay(_ handler: @escaping (UICollectionView, UICollectionViewCell, IndexPath) -> Void) -> Self {
+    public func onWillDisplay(_ handler: @escaping (IndexPath) -> Void) -> Self {
         self._willDisplay = handler
         return self
     }
-
-	var _didEndDisplay: ((UICollectionView, UICollectionViewCell, IndexPath) -> Void)?
-
-	public func onDidEndDisplay(_ handler: @escaping (UICollectionView, UICollectionViewCell, IndexPath) -> Void) -> Self {
-		self._didEndDisplay = handler
-		return self
-	}
     
-    var _didSelectItemAt: ((UICollectionView, IndexPath) -> Void)?
+    var _didSelectItemAt: ((IndexPath) -> Void)?
     
-    public func onDidSelectItemAt(_ handler: @escaping (UICollectionView, IndexPath) -> Void) -> Self {
+    public func onDidSelectItemAt(_ handler: @escaping (IndexPath) -> Void) -> Self {
         self._didSelectItemAt = handler
         return self
     }
 
-    var _didDeselectItemAt: ((UICollectionView, IndexPath) -> Void)?
+    var _didDeselectItemAt: ((IndexPath) -> Void)?
 
-    public func onDidDeselectItemAt(_ handler: @escaping (UICollectionView, IndexPath) -> Void) -> Self {
+    public func onDidDeselectItemAt(_ handler: @escaping (IndexPath) -> Void) -> Self {
         self._didDeselectItemAt = handler
         return self
     }
 
-    var _didHighlightItemAt: ((UICollectionView, IndexPath) -> Void)?
+    var _didHighlightItemAt: ((IndexPath) -> Void)?
 
-    public func onDidHighlightItemAt(_ handler: @escaping (UICollectionView, IndexPath) -> Void) -> Self {
+    public func onDidHighlightItemAt(_ handler: @escaping (IndexPath) -> Void) -> Self {
         self._didHighlightItemAt = handler
         return self
     }
 
-    var _didUnhighlightItemAt: ((UICollectionView, IndexPath) -> Void)?
+    var _didUnhighlightItemAt: ((IndexPath) -> Void)?
 
-    public func onUnhighlightItemAt(_ handler: @escaping (UICollectionView, IndexPath) -> Void) -> Self {
+    public func onUnhighlightItemAt(_ handler: @escaping (IndexPath) -> Void) -> Self {
         self._didUnhighlightItemAt = handler
         return self
     }
     
-    var _shouldHighlightItemAt: ((UICollectionView, IndexPath) -> Bool)?
+    var _shouldHighlightItemAt: ((IndexPath) -> Bool)?
     
-    public func onShouldHighlightItemAt(_ handler: @escaping (UICollectionView, IndexPath) -> Bool) -> Self {
+    public func onShouldHighlightItemAt(_ handler: @escaping (IndexPath) -> Bool) -> Self {
         self._shouldHighlightItemAt = handler
         return self
     }
-
-	var _scrollViewDidScroll: ((UICollectionView) -> Void)?
-
-	public func onScrollViewDidScroll(_ handler: @escaping (UICollectionView) -> Void) -> Self {
-		self._scrollViewDidScroll = handler
-		return self
-	}
-
-	var _scrollViewDidEndDecelerating: ((UICollectionView) -> Void)?
-
-	public func onScrollViewDidEndDecelerating(_ handler: @escaping (UICollectionView) -> Void) -> Self {
-		self._scrollViewDidEndDecelerating = handler
-		return self
-	}
-
-	var _scrollViewDidEndDragging: ((UICollectionView, Bool) -> Void)?
-
-	public func onScrollViewDidEndDragging(_ handler: @escaping (UICollectionView, Bool) -> Void) -> Self {
-		self._scrollViewDidEndDragging = handler
-		return self
-	}
-
-	var _onPerformDrop: ((UICollectionView, IndexPath, IndexPath) -> Void)?
-
-	public func onPerformDrop(_ handler: @escaping (UICollectionView, IndexPath, IndexPath) -> Void) -> Self {
-		self._onPerformDrop = handler
-		return self
-	}
-
-	var _prefetchItemsAt: ((UICollectionView, [IndexPath]) -> Void)?
-
-	public func onPrefetchItemsAt(_ handler: @escaping (UICollectionView, [IndexPath]) -> Void) -> Self {
-		self._prefetchItemsAt = handler
-		return self
-	}
-
-	var _cancelPrefetchingForItemsAt: ((UICollectionView, [IndexPath]) -> Void)?
-
-	public func onCancelPrefetchingForItemsAt(_ handler: @escaping (UICollectionView, [IndexPath]) -> Void) -> Self {
-		self._cancelPrefetchingForItemsAt = handler
-		return self
-	}
-
-	var _onCompleteBatchUpdates: (() -> Void)?
-
-	public func onCompleteBatchUpdates(_ handler: @escaping () -> Void) -> Self {
-		self._onCompleteBatchUpdates = handler
-		return self
-	}
 
 	// MARK: - Layout
 
@@ -377,24 +312,6 @@ open class UCollection: UView {
         self.collectionView.isScrollEnabled = enabled
         return self
     }
-
-	@discardableResult
-	public func paging(_ enabled: Bool) -> Self {
-		self.collectionView.isPagingEnabled = enabled
-		return self
-	}
-
-	@discardableResult
-	public func dragDrop(_ enabled: Bool) -> Self {
-		self.collectionView.dragInteractionEnabled = enabled
-		return self
-	}
-
-	@discardableResult
-	public func includeSafeArea(_ value: Bool) -> Self {
-		self.isSafeAreaIncluded = value
-		return self
-	}
 }
 
 extension UCollection {
@@ -456,62 +373,34 @@ extension UCollection {
             let itemsChangeset = Changeset(previous: oldItems, current: newItems)
             changesets.append(.items(itemsChangeset, section))
         }
-
-		let canPerformWithAnimation: Bool = {
-			for changes in changesets {
-				switch changes {
-				case .section:
-					return false
-				case let .items(changeset, _):
-					if changeset.inserts.isEmpty == false || changeset.removals.isEmpty == false {
-						return false
-					}
-				}
-			}
-			return true
-		}()
-
-		if canPerformWithAnimation {
-			self.performUpdates(newSections: newSections, changesets: changesets)
-		}
-		else {
-			UIView.performWithoutAnimation {
-				self.performUpdates(newSections: newSections, changesets: changesets)
-			}
-		}
+        
+        self.collectionView.performBatchUpdates({
+            self.sections = newSections
+            changesets.forEach {
+                switch $0 {
+                case let .section(changes):
+                    self.collectionView.deleteSections(changes.removals)
+                    self.collectionView.insertSections(changes.inserts)
+                    changes.moves.forEach {
+                        self.collectionView.moveSection($0.source, toSection: $0.destination)
+                    }
+                case let .items(changes, section):
+                    self.collectionView.deleteItems(at: changes.removals.map { IndexPath(item: $0, section: section) })
+                    self.collectionView.insertItems(at: changes.inserts.map { IndexPath(item: $0, section: section) })
+                    self.collectionView.reloadItems(at: changes.mutations.map { IndexPath(item: $0, section: section) })
+                    changes.moves.forEach {
+                        self.collectionView.moveItem(at: .init(item: $0.source, section: section), to: .init(item: $0.destination, section: section))
+                    }
+                }
+            }
+        }, completion: { _ in
+            self.isChanging = false
+            if self.changesPool > 0 {
+                self.changesPool -= 1
+                self.reloadData()
+            }
+        })
     }
-
-	func performUpdates(newSections: [Section], changesets: [ChangesetData]) {
-		self.collectionView.performBatchUpdates({
-			self.sections = newSections
-			changesets.forEach {
-				switch $0 {
-				case let .section(changes):
-					self.collectionView.deleteSections(changes.removals)
-					self.collectionView.insertSections(changes.inserts)
-					changes.moves.forEach {
-						self.collectionView.moveSection($0.source, toSection: $0.destination)
-					}
-				case let .items(changes, section):
-					self.collectionView.deleteItems(at: changes.removals.map { IndexPath(item: $0, section: section) })
-					self.collectionView.insertItems(at: changes.inserts.map { IndexPath(item: $0, section: section) })
-					self.collectionView.reloadItems(at: changes.mutations.map { IndexPath(item: $0, section: section) })
-					changes.moves.forEach {
-						self.collectionView.moveItem(at: .init(item: $0.source, section: section), to: .init(item: $0.destination, section: section))
-					}
-				}
-			}
-		}, completion: { _ in
-			self.isChanging = false
-			if self.changesPool > 0 {
-				self.changesPool -= 1
-				self.reloadData()
-			}
-			else {
-				self._onCompleteBatchUpdates?()
-			}
-		})
-	}
     
     func updateRegistration() {
         self.sections.forEach {
@@ -519,7 +408,6 @@ extension UCollection {
             $0.items.forEach { self.collectionView.register($0.cellClass) }
             _ = $0.footer.map { self.collectionView.register($0.viewClass, UICollectionView.elementKindSectionFooter) }
         }
-		self.collectionView.register(UCollectionCell.self)
     }
     
     func unwrapSections(_ item: USectionItemable) -> [USection] {
@@ -537,28 +425,17 @@ extension UCollection: UICollectionViewDataSource {
     }
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-		guard self.sections.indices.contains(section) else { return 0 }
-        return self.sections[section].items.count
+        self.sections[section].items.count
     }
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-		guard let item = self.item(for: indexPath) else { return collectionView.dequeueReusableCell(with: UCollectionCell.self, for: indexPath) }
-        let cell = item.generate(collectionView: collectionView, for: indexPath)
+        let cell = self.sections[indexPath.section].items[indexPath.item].generate(collectionView: collectionView, for: indexPath)
 		cell.transform = CGAffineTransform(rotationAngle: self.reversed ? CGFloat(Double.pi) : 0)
 		return cell
     }
     
     public func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-		guard self.sections.indices.contains(indexPath.section) else { return UICollectionReusableView() }
-		let view: UICollectionReusableView
-		switch kind {
-		case UICollectionView.elementKindSectionHeader:
-			view = self.sections[indexPath.section].header?.generate(collectionView: collectionView, kind: kind, for: indexPath) ?? UICollectionReusableView()
-		case UICollectionView.elementKindSectionFooter:
-			view = self.sections[indexPath.section].footer?.generate(collectionView: collectionView, kind: kind, for: indexPath) ?? UICollectionReusableView()
-		default:
-			view = UICollectionReusableView()
-		}
+        let view = self.sections[indexPath.section].header?.generate(collectionView: collectionView, kind: kind, for: indexPath) ?? UICollectionReusableView()
 		view.transform = CGAffineTransform(rotationAngle: self.reversed ? CGFloat(Double.pi) : 0)
 		return view
     }
@@ -566,16 +443,14 @@ extension UCollection: UICollectionViewDataSource {
 
 extension UCollection: UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-		guard let item = self.item(for: indexPath) else { return .zero }
         guard self.collectionViewOriginalSize.width > 0 && self.collectionViewOriginalSize.height > 0 else { return .zero }
 		let sectionInset = (collectionViewLayout as? UICollectionViewFlowLayout)?.sectionInset ?? .zero
 		let collectionSize = self.collectionViewOriginalSize
 		let size = CGSize(width: collectionSize.width - (sectionInset.left + sectionInset.right), height: collectionSize.height - (sectionInset.top + sectionInset.bottom))
-		return item.size(by: size, direction: self.direction)
+		return self.sections[indexPath.section].items[indexPath.item].size(by: size, direction: self.direction)
     }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-		guard self.sections.indices.contains(section) else { return .zero }
         guard self.collectionViewOriginalSize.width > 0 && self.collectionViewOriginalSize.height > 0 else { return .zero }
 		let sectionInset = (collectionViewLayout as? UICollectionViewFlowLayout)?.sectionInset ?? .zero
 		let collectionSize = self.collectionViewOriginalSize
@@ -584,7 +459,6 @@ extension UCollection: UICollectionViewDelegateFlowLayout {
     }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-		guard self.sections.indices.contains(section) else { return .zero }
         guard self.collectionViewOriginalSize.width > 0 && self.collectionViewOriginalSize.height > 0 else { return .zero }
 		let sectionInset = (collectionViewLayout as? UICollectionViewFlowLayout)?.sectionInset ?? .zero
 		let collectionSize = self.collectionViewOriginalSize
@@ -593,21 +467,18 @@ extension UCollection: UICollectionViewDelegateFlowLayout {
     }
 
 	public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-		guard self.sections.indices.contains(section) else { return .zero }
 		let sectionInset = (collectionViewLayout as? UICollectionViewFlowLayout)?.sectionInset ?? .zero
 		let customSectionInset = self._sectionInset?(self.sections[section].identifier)
 		return customSectionInset ?? sectionInset
 	}
 
 	public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-		guard self.sections.indices.contains(section) else { return .zero }
 		let minimumLineSpacing = (collectionViewLayout as? UICollectionViewFlowLayout)?.minimumLineSpacing ?? .zero
 		let customMinimumLineSpacing = self._minimumLineSpacing?(self.sections[section].identifier)
 		return customMinimumLineSpacing ?? minimumLineSpacing
 	}
 
 	public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-		guard self.sections.indices.contains(section) else { return .zero }
 		let minimumInteritemSpacing = (collectionViewLayout as? UICollectionViewFlowLayout)?.minimumInteritemSpacing ?? .zero
 		let customMinimumInteritemSpacing = self._minimumInteritemSpacing?(self.sections[section].identifier)
 		return customMinimumInteritemSpacing ?? minimumInteritemSpacing
@@ -616,37 +487,32 @@ extension UCollection: UICollectionViewDelegateFlowLayout {
 
 extension UCollection: UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        self._willDisplay?(collectionView, cell, indexPath)
-        (self.item(for: indexPath) as? UItemableDelegate)?.willDisplay()
+        self._willDisplay?(indexPath)
+        (self.sections[indexPath.section].items[indexPath.item] as? UItemableDelegate)?.willDisplay()
     }
-
-	public func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-		self._didEndDisplay?(collectionView, cell, indexPath)
-		(self.item(for: indexPath) as? UItemableDelegate)?.didEndDisplay()
-	}
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        self._didSelectItemAt?(collectionView, indexPath)
-		(self.item(for: indexPath) as? UItemableDelegate)?.didSelect()
+        self._didSelectItemAt?(indexPath)
+        (self.sections[indexPath.section].items[indexPath.item] as? UItemableDelegate)?.didSelect()
     }
 
     public func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        self._didDeselectItemAt?(collectionView, indexPath)
-		(self.item(for: indexPath) as? UItemableDelegate)?.didDeselect()
+        self._didDeselectItemAt?(indexPath)
+        (self.sections[indexPath.section].items[indexPath.item] as? UItemableDelegate)?.didDeselect()
     }
 
     public func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
-        self._didHighlightItemAt?(collectionView, indexPath)
-		(self.item(for: indexPath) as? UItemableDelegate)?.didHighlight()
+        self._didHighlightItemAt?(indexPath)
+        (self.sections[indexPath.section].items[indexPath.item] as? UItemableDelegate)?.didHighlight()
     }
 
     public func collectionView(_ collectionView: UICollectionView, didUnhighlightItemAt indexPath: IndexPath) {
-        self._didUnhighlightItemAt?(collectionView, indexPath)
-		(self.item(for: indexPath) as? UItemableDelegate)?.didUnhighlight()
+        self._didUnhighlightItemAt?(indexPath)
+        (self.sections[indexPath.section].items[indexPath.item] as? UItemableDelegate)?.didUnhighlight()
     }
     
     public func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
-        self._shouldHighlightItemAt?(collectionView, indexPath) ?? true
+        self._shouldHighlightItemAt?(indexPath) ?? true
     }
 }
 
@@ -666,58 +532,7 @@ extension UCollection: UIScrollViewDelegate {
     
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         self.scrollPosition?.wrappedValue = scrollView.contentOffset
-		self._scrollViewDidScroll?(self.collectionView)
     }
-
-	public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-		self._scrollViewDidEndDecelerating?(self.collectionView)
-	}
-
-	public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-		self._scrollViewDidEndDragging?(self.collectionView, decelerate)
-	}
-}
-
-extension UCollection: UICollectionViewDragDelegate {
-	public func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
-		guard let item = self.item(for: indexPath), (item as? UItemableDrag)?.canDrag == true else { return [] }
-		let itemProvider = NSItemProvider(object: "\(item.identifier.hashValue)" as NSString)
-		let dragItem = UIDragItem(itemProvider: itemProvider)
-		dragItem.localObject = item
-		return [dragItem]
-	}
-}
-
-extension UCollection: UICollectionViewDropDelegate {
-	public func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal {
-		if collectionView.hasActiveDrag {
-			return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
-		}
-		return UICollectionViewDropProposal(operation: .forbidden)
-	}
-
-
-	public func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
-		guard coordinator.proposal.operation == .move,
-			  let item = coordinator.items.first,
-			  let sourceIndexPath = item.sourceIndexPath,
-			  let destanationIndexPath = coordinator.destinationIndexPath
-		else {
-			return
-		}
-		self._onPerformDrop?(collectionView, sourceIndexPath, destanationIndexPath)
-		coordinator.drop(item.dragItem, toItemAt: destanationIndexPath)
-	}
-}
-
-extension UCollection: UICollectionViewDataSourcePrefetching {
-	public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-		self._prefetchItemsAt?(collectionView, indexPaths)
-	}
-
-	public func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
-		self._cancelPrefetchingForItemsAt?(collectionView, indexPaths)
-	}
 }
 
 extension UCollection {
@@ -816,13 +631,6 @@ extension UCollection {
 		self.collectionView.transform = CGAffineTransform(rotationAngle: value ? -(CGFloat)(Double.pi) : 0)
 		self.collectionView.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: self.collectionView.bounds.size.width - 8)
 		return self
-	}
-
-	public func item(for indexPath: IndexPath) -> UItemable? {
-		guard self.sections.indices.contains(indexPath.section) && self.sections[indexPath.section].items.indices.contains(indexPath.item) else {
-			return nil
-		}
-		return self.sections[indexPath.section].items[indexPath.item]
 	}
 }
 #endif

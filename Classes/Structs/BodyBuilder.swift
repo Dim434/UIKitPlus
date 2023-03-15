@@ -7,7 +7,7 @@ import UIKit
 @available(*, deprecated, renamed: "BodyBuilder")
 public typealias ViewBuilder = BodyBuilder
 
-@resultBuilder public struct BodyBuilder {
+@_functionBuilder public struct BodyBuilder {
     public typealias Result = BodyBuilderItemable
     public typealias SingleView = () -> Result
     

@@ -53,7 +53,6 @@ open class ViewController: BaseViewController {
         #if !os(macOS)
         isLandscape = view.frame.size.width > view.frame.size.height
         subscribeToKeyboardNotifications()
-		subscribeToAppNotifications()
         #endif
         body { body }
         buildUI()
@@ -137,8 +136,6 @@ open class ViewController: BaseViewController {
     var _viewWillAppearFirstTime: (Bool) -> Void = { _ in }
     var _viewWillDisappear: (Bool) -> Void = { _ in }
     var _viewDidDisappear: (Bool) -> Void = { _ in }
-	var _appWillResignActive = {}
-	var _appWillEnterForeground = {}
     #endif
     
     open override func viewDidLoad() {
@@ -266,13 +263,6 @@ open class ViewController: BaseViewController {
         NotificationCenter.default.addObserver(self, selector:#selector(keyboardWillDisappear(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         #endif
     }
-
-	private func subscribeToAppNotifications() {
-		#if !os(tvOS)
-		NotificationCenter.default.addObserver(self, selector: #selector(willAppResignActive), name: UIApplication.willResignActiveNotification, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(willAppEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
-		#endif
-	}
     
     var keyboardWasShownAtLeastOnce = false
     
@@ -333,52 +323,12 @@ open class ViewController: BaseViewController {
         closure(self, navigationItem)
         return self
     }
-
-	@discardableResult
-	public func leftBarButton(_ closure: @autoclosure () -> UIBarButtonItem) -> Self {
-		self.navigationItem.leftBarButtonItem = closure()
-		return self
-	}
-
-	@discardableResult
-	public func leftBarButtons(_ closure: @autoclosure () -> [UIBarButtonItem]) -> Self {
-		self.navigationItem.leftBarButtonItems = closure()
-		return self
-	}
-
-	@discardableResult
-	public func rightBarButton(_ closure: (Self, UINavigationItem) -> Void) -> Self {
-		closure(self, navigationItem)
-		return self
-	}
-
-	@discardableResult
-	public func rightBarButton(_ closure: @autoclosure () -> UIBarButtonItem) -> Self {
-		self.navigationItem.rightBarButtonItem = closure()
-		return self
-	}
-
-	@discardableResult
-	public func rightBarButtons(_ closure: @autoclosure () -> [UIBarButtonItem]) -> Self {
-		self.navigationItem.rightBarButtonItems = closure()
-		return self
-	}
     
     @discardableResult
     public func navigationController(_ closure: (Self, UINavigationController?) -> Void) -> Self {
         closure(self, navigationController)
         return self
     }
-
-	@objc
-	private func willAppResignActive() {
-		self._appWillResignActive()
-	}
-
-	@objc
-	private func willAppEnterForeground() {
-		self._appWillEnterForeground()
-	}
     #endif
 }
 
@@ -627,20 +577,6 @@ extension ViewController {
         return self
     }
     #endif
-
-	#if !os(macOS)
-	@discardableResult
-	public func onAppWillResignActive(_ closure: @escaping () -> Void) -> Self {
-		_appWillResignActive = closure
-		return self
-	}
-
-	@discardableResult
-	public func onAppWillEnterForegorund(_ closure: @escaping () -> Void) -> Self {
-		_appWillEnterForeground = closure
-		return self
-	}
-	#endif
 }
 
 // MARK: Titleable

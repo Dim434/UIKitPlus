@@ -26,35 +26,21 @@ extension UIViewController {
 }
 
 extension BaseApp {
-    /// Returns safe insets of the mainScene's window
-    public static var safeInsets: UIEdgeInsets { mainScene.safeInsets }
-    
-    /// Returns safe insets of the mainScene's window
-    public var safeInsets: UIEdgeInsets { mainScene.safeInsets }
-    
     public typealias RootSimpleCompletion = () -> Void
     public typealias RootBeforeTransition = (UIViewController) -> Void
     
     public class MainScene: _AnyScene, AppBuilderContent {
+		public var topViewController: UIViewController {
+			self.current.topViewController
+		}
+
         public var appBuilderContent: AppBuilderItem { .mainScene(self) }
         
         public var persistentIdentifier: String = UUID().uuidString
         public var stateRestorationActivity: NSUserActivity?
         public var userInfo: [String : Any]?
         
-        /// Link closure to the wndow
-        var _windowRetriever: () -> UIWindow = { UIWindow() }
-        
-        /// Returns the window
-        public var window: UIWindow { _windowRetriever() }
-        
-        /// Link closure to safe insets of the wndow
-        var _safeInsetsRetriever: () -> UIEdgeInsets = { .zero }
-        
-        /// Returns safe insets of the window
-        public var safeInsets: UIEdgeInsets { _safeInsetsRetriever() }
-        
-        var _onConnect: ((UIWindow?) -> Void)?
+        var _onConnect: ((UIWindow?, Set<NSUserActivity>) -> Void)?
         var _onDisconnect: ((UIWindow?) -> Void)?
         var _onDestroy: ((UIWindow?) -> Void)?
         var _onBecomeActive: ((UIWindow?) -> Void)?
@@ -83,9 +69,7 @@ extension BaseApp {
         
         @UState public internal(set) var currentScreen: SceneScreenType = .splash
         public internal(set) lazy var current: UIViewController = NotImplementedViewController("nothing")
-        
-        var _showOnboardingBeforeMainScreen = false
-        
+
         var screens: [SceneScreenType: () -> UIViewController] = [:] // NotImplementedViewController("splashScreen")
         
         /// By default shows `splashScreen`
@@ -128,11 +112,6 @@ extension BaseApp {
             return self
         }
         
-        public func logoutScreen(_ handler: @escaping () -> UIViewController) -> Self {
-            screens[.logout] = handler
-            return self
-        }
-        
         public func mainScreen(_ handler: @escaping () -> UIViewController) -> Self {
             screens[.main] = handler
             return self
@@ -148,69 +127,122 @@ extension BaseApp {
             return self
         }
         
-        public func showOnboardingBeforeMainScreen() -> Self {
-            _showOnboardingBeforeMainScreen = true
-            return self
-        }
-        
-        open func `switch`(to type: SceneScreenType, animation: RootTransitionAnimation, beforeTransition: RootBeforeTransition? = nil, completion: RootSimpleCompletion? = nil) {
+        open func `switch`(
+			to type: SceneScreenType,
+			animation: RootTransitionAnimation,
+			beforeTransition: RootBeforeTransition? = nil,
+			completion: RootSimpleCompletion? = nil
+		) {
             if currentScreen == type {
                 print("⚠️ Don't show \(type) twice")
                 return
             }
-            guard let vc = nextViewController(for: type) else { return }
-            if _showOnboardingBeforeMainScreen, screens[.onboarding] != nil {
-                `switch`(to: .onboarding, animation: animation, beforeTransition: beforeTransition, completion: completion)
-                return
-            }
+			let vc = nextViewController(for: type)
             currentScreen = type
             beforeTransition?(vc)
             switch animation {
             case .none:
-                replaceWithoutAnimation(screens[.login]?() ?? NotImplementedViewController(SceneScreenType.login.description))
-//                proceedDeeplink()
+                replaceWithoutAnimation(vc)
                 completion?()
             case .dismiss:
-                animateDismissTransition(to: vc) { [weak self] in
-                    if type == .logout {
-                        self?.currentScreen = .login
-                    }
-//                    self?.proceedDeeplink()
-                    completion?()
-                }
+				animateDismissTransition(to: vc, completion: completion)
             case .fade:
-                animateFadeTransition(to: vc) { [weak self] in
-                    if type == .logout {
-                        self?.currentScreen = .login
-                    }
-//                    self?.proceedDeeplink()
-                    completion?()
-                }
+                animateFadeTransition(to: vc, completion: completion)
             }
         }
         
-        public func `switch`(to: UIViewController, as: SceneScreenType, animation: RootTransitionAnimation, beforeTransition: RootBeforeTransition? = nil, completion: RootSimpleCompletion? = nil) {
+        public func `switch`(
+			to: UIViewController,
+			as: SceneScreenType,
+			animation: RootTransitionAnimation,
+			beforeTransition: RootBeforeTransition? = nil,
+			completion: RootSimpleCompletion? = nil
+		) {
             currentScreen = `as`
             switch animation {
             case .none:
                 beforeTransition?(to)
                 replaceWithoutAnimation(to)
-//                proceedDeeplink()
                 completion?()
             case .dismiss:
                 beforeTransition?(to)
                 animateDismissTransition(to: to) {
-//                    self.proceedDeeplink()
                     completion?()
                 }
             case .fade:
                 beforeTransition?(to)
                 animateFadeTransition(to: to) {
-//                    self.proceedDeeplink()
                     completion?()
                 }
             }
         }
+
+		public func perform(
+			_ transitions: [RootTransition],
+			animated: Bool = true,
+			completion: @escaping () -> Void = {}
+		) {
+			guard transitions.isEmpty == false else { return completion() }
+
+			var transitions = transitions
+
+			self.perform(transitions.removeFirst(), animated: animated) { [weak self] in
+				self?.perform(transitions, animated: animated, completion: completion)
+			}
+		}
+
+		public func perform(
+			_ transition: RootTransition,
+			animated: Bool = true,
+			completion: @escaping () -> Void = {}
+		) {
+			switch transition {
+			case let .setRoot(presetable, screen, animation):
+				self.switch(
+					to: presetable.viewControllerToPresent,
+					as: SceneScreenType(type: screen),
+					animation: animation,
+					beforeTransition: nil,
+					completion: completion
+				)
+			case let .setTab(item):
+				guard let tabBarController = self.current as? UITabBarController else {
+					print("⚠️ Can't select \(item) current controller must be UITabBarController")
+					return
+				}
+				tabBarController.selectedIndex = item
+				completion()
+			case let .push(presentable):
+				self.topViewController.navigationController?.pushViewController(
+					presentable.viewControllerToPresent,
+					animated: animated,
+					completion: completion
+				)
+			case .pop:
+				self.topViewController.navigationController?.popViewController(
+					animated: animated,
+					completion: completion
+				)
+			case .popToRoot:
+				self.topViewController.navigationController?.popToRootViewController(
+					animated: animated,
+					completion: completion
+				)
+			case let .present(presentable):
+				self.topViewController.present(
+					presentable.viewControllerToPresent,
+					animated: animated,
+					completion: completion
+				)
+			case .dismiss:
+				self.topViewController.dismiss(
+					animated: animated,
+					completion: completion
+				)
+			case .dismissOnRoot:
+				self.viewController.dismiss(animated: animated, completion: completion)
+			}
+		}
         
         private func replaceWithoutAnimation(_ new: UIViewController) {
             viewController.addChild(new)
@@ -262,20 +294,85 @@ extension BaseApp {
             }
         }
         
-        func nextViewController(for type: SceneScreenType) -> UIViewController? {
-            switch type {
-            case .splash: return screens[type]?()
-            case .login: return screens[type]?()
-            case .logout:
-                guard let handler = screens[type] else {
-                    return screens[.login]?()
-                }
-                return handler()
-            case .main: return screens[type]?()
-            case .onboarding: return screens[type]?() ?? screens[.main]?()
-            default: return nil
-            }
+        func nextViewController(for type: SceneScreenType) -> UIViewController {
+			return screens[type]?() ?? NotImplementedViewController(type.description)
         }
     }
+}
+
+private extension UIViewController {
+	var topViewController: UIViewController {
+		self.findTopViewController(self)
+	}
+
+	private func findTopViewController(_ controller: UIViewController) -> UIViewController {
+		if let presented = controller.presentedViewController {
+			return self.findTopViewController(presented)
+		}
+
+		if let tabController = controller as? UITabBarController, let selected = tabController.selectedViewController {
+			return self.findTopViewController(selected)
+		}
+
+		if let navigationController = controller as? UINavigationController,
+		   let lastViewController = navigationController.visibleViewController
+		{
+			return self.findTopViewController(lastViewController)
+		}
+
+		if let pageController = controller as? UIPageViewController,
+		   let lastViewController = pageController.viewControllers?.first
+		{
+			return self.findTopViewController(lastViewController)
+		}
+
+		return controller
+	}
+}
+
+private extension UINavigationController {
+	func pushViewController(_ viewController: UIViewController, animated: Bool, completion: @escaping () -> Void) {
+		self.pushViewController(viewController, animated: animated)
+
+		guard animated, let coordinator = self.transitionCoordinator else {
+			DispatchQueue.main.async { completion() }
+			return
+		}
+
+		coordinator.animate(alongsideTransition: nil) { _ in completion() }
+	}
+
+	func popViewController(animated: Bool, completion: @escaping () -> Void) {
+		self.popViewController(animated: animated)
+
+		guard animated, let coordinator = self.transitionCoordinator else {
+			DispatchQueue.main.async { completion() }
+			return
+		}
+
+		coordinator.animate(alongsideTransition: nil) { _ in completion() }
+	}
+
+	func popToViewController(_ viewController: UIViewController, animated: Bool, completion: @escaping () -> Void) {
+		self.popToViewController(viewController, animated: animated)
+
+		guard animated, let coordinator = self.transitionCoordinator else {
+			DispatchQueue.main.async { completion() }
+			return
+		}
+
+		coordinator.animate(alongsideTransition: nil) { _ in completion() }
+	}
+
+	func popToRootViewController(animated: Bool, completion: @escaping () -> Void) {
+		self.popToRootViewController(animated: animated)
+
+		guard animated, let coordinator = self.transitionCoordinator else {
+			DispatchQueue.main.async { completion() }
+			return
+		}
+
+		coordinator.animate(alongsideTransition: nil) { _ in completion() }
+	}
 }
 #endif

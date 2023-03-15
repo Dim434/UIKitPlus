@@ -1,6 +1,6 @@
 import Foundation
 
-@resultBuilder public struct AnyStringBuilder {
+@_functionBuilder public struct AnyStringBuilder {
     public typealias Handler = () -> AnyString
     
     public static func buildBlock() -> AnyString { "" }

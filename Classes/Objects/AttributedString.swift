@@ -64,8 +64,6 @@ open class AttributedString: AnyString, BodyBuilderItemable {
     public func onUpdate(_ handler: @escaping (NSAttributedString) -> Void) {
         _updateHandler = handler
     }
-
-	public var string: String { self.attributedString.string }
     
     public var attributedString: NSAttributedString { _attributedString }
     
@@ -78,15 +76,6 @@ open class AttributedString: AnyString, BodyBuilderItemable {
     public static func make(_ v: NSAttributedString) -> Self {
         .init(v)
     }
-
-	public convenience init (_ image: UIImage, bounds: CGRect? = nil) {
-		let attachment = NSTextAttachment()
-		attachment.image = image
-		if let bounds = bounds {
-			attachment.bounds = bounds
-		}
-		self.init(NSMutableAttributedString(attachment: attachment))
-	}
     
     public required init (_ attrString: NSAttributedString) {
         _attributedString = .init(attributedString: attrString)
@@ -97,7 +86,7 @@ open class AttributedString: AnyString, BodyBuilderItemable {
         _attributedString = .init(string: string)
         _setup()
     }
-
+    
     public init (_ localized: LocalizedString...) {
         _attributedString = .init(string: String(localized))
         _setup()
@@ -107,22 +96,16 @@ open class AttributedString: AnyString, BodyBuilderItemable {
         _attributedString = .init(string: String(localized))
         _setup()
     }
-
+    
     private func _setup() {
         _paragraphStyle.onUpdate { [weak self] in
             guard let self = self else { return }
             self.paragraphStyle(self._paragraphStyle)
         }
     }
-
-	@discardableResult
-	public func addAttributes(_ attrs: [NSAttributedString.Key: Any], at range: Range<String.Index>? = nil) -> AttributedString {
-		attrs.forEach { self.addAttribute($0.key, $0.value, at: range) }
-		return self
-	}
     
     @discardableResult
-	public func addAttribute(_ attr: NSAttributedString.Key, _ value: Any, at range: Range<String.Index>? = nil) -> AttributedString {
+    func addAttribute(_ attr: NSAttributedString.Key, _ value: Any, at range: Range<String.Index>? = nil) -> AttributedString {
         // TODO: check range
 		let range = range ?? _attributedString.string.range(of: attributedString.string)
 		range.map { _attributedString.addAttribute(attr, value: value, range: NSRange($0, in: _attributedString.string)) }
@@ -131,31 +114,13 @@ open class AttributedString: AnyString, BodyBuilderItemable {
     }
     
     @discardableResult
-	public func removeAttribute(_ attr: NSAttributedString.Key, at range: Range<String.Index>? = nil) -> AttributedString {
+    func removeAttribute(_ attr: NSAttributedString.Key, at range: Range<String.Index>? = nil) -> AttributedString {
         // TODO: check range
 		let range = range ?? _attributedString.string.range(of: attributedString.string)
 		range.map { _attributedString.removeAttribute(attr, range: NSRange($0, in: _attributedString.string)) }
         _updateHandler(_attributedString)
         return self
     }
-
-	@discardableResult
-	public func enumerateAttributes(
-		at range: Range<String.Index>? = nil,
-		completion: ([NSRange: [NSAttributedString.Key: Any]], AttrStr) -> Void
-	) -> AttributedString {
-		// TODO: check range
-		let range = range ?? _attributedString.string.range(of: attributedString.string)
-		range.map {
-			var allAttributes: [NSRange: [NSAttributedString.Key: Any]] = [:]
-			_attributedString.enumerateAttributes(in: NSRange($0, in: _attributedString.string), options: []) { attrs, range, _ in
-				allAttributes[range] = attrs
-			}
-			completion(allAttributes, self)
-		}
-		_updateHandler(_attributedString)
-		return self
-	}
     
     /// UColor, default nil: no background
     @discardableResult
@@ -282,14 +247,6 @@ open class AttributedString: AnyString, BodyBuilderItemable {
     public func attachment(_ value: NSTextAttachment, at range: Range<String.Index>? = nil) -> AttributedString {
         addAttribute(.attachment, value, at: range)
     }
-
-	/// NSTextAttachment image
-	@discardableResult
-	public func attachment(_ image: UIImage, at range: Range<String.Index>? = nil) -> AttributedString {
-		let attachment = NSTextAttachment()
-		attachment.image = image
-		return addAttribute(.attachment, attachment, at: range)
-	}
     
     /// NSTextAttachment(data: Data, ofType: String), default nil
     @discardableResult

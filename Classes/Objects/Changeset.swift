@@ -142,7 +142,7 @@ public struct Changeset {
 
         var table: [Identifier: DiffEntry] = Dictionary(minimumCapacity: Int(current.count))
 
-        let oldIdentifiers = ContiguousArray(previous.map(identifier))
+        var oldIdentifiers = ContiguousArray(previous.map(identifier))
         var newIdentifiers = ContiguousArray(current.map(identifier))
 
         var oldReferences: [DiffReference] = []

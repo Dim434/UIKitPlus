@@ -25,7 +25,7 @@ struct _AppContent: AppBuilderContent {
     let appBuilderContent: AppBuilderItem
 }
 
-@resultBuilder public struct AppBuilder {
+@_functionBuilder public struct AppBuilder {
     public typealias Block = () -> AppBuilderContent
 
     public static func buildBlock() -> AppBuilderContent {

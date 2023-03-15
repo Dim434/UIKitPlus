@@ -22,7 +22,7 @@ struct _ShortcutContent: ShortcutBuilderContent {
     let shortcutBuilderContent: ShortcutBuilderItem
 }
 
-@resultBuilder public struct ShortcutBuilder {
+@_functionBuilder public struct ShortcutBuilder {
     public typealias Block = () -> ShortcutBuilderContent
 
     public static func buildBlock() -> ShortcutBuilderContent {

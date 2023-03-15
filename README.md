@@ -1,5 +1,3 @@
-# Fork UIKitPlus
-
 <p align="center">
     <a href="LICENSE">
         <img src="https://img.shields.io/badge/license-MIT-brightgreen.svg" alt="MIT License">

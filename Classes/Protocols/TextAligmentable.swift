@@ -4,8 +4,7 @@ import AppKit
 import UIKit
 #endif
 
-public protocol TextAligmentable: AnyObject {
-	func alignment(_ alignment: State<NSTextAlignment>) -> Self
+public protocol TextAligmentable {
     func alignment(_ alignment: NSTextAlignment) -> Self
 }
 
@@ -15,12 +14,6 @@ protocol _TextAligmentable: TextAligmentable {
 
 @available(iOS 13.0, *)
 extension TextAligmentable {
-	@discardableResult
-	public func alignment(_ alignment: State<NSTextAlignment>) -> Self {
-		alignment.listen { [weak self] in self?.alignment($0) }
-		return self.alignment(alignment.wrappedValue)
-	}
-
     @discardableResult
     public func alignment(_ alignment: NSTextAlignment) -> Self {
         guard let s = self as? _TextAligmentable else { return self }
@@ -31,12 +24,6 @@ extension TextAligmentable {
 
 // for iOS lower than 13
 extension _TextAligmentable {
-	@discardableResult
-	public func alignment(_ alignment: State<NSTextAlignment>) -> Self {
-		alignment.listen { [weak self] in self?.alignment($0) }
-		return self.alignment(alignment.wrappedValue)
-	}
-
     @discardableResult
     public func alignment(_ alignment: NSTextAlignment) -> Self {
         _setTextAlignment(v: alignment)

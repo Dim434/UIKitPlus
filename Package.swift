@@ -5,16 +5,16 @@ import PackageDescription
 
 let package = Package(
     name: "UIKitPlus",
-	platforms: [
-	.iOS("11.0"),
-        .macOS(.v10_11),
-        .tvOS(.v13)
-	],
+    platforms: [
+        .macOS(.v10_14), .iOS(.v11), .tvOS(.v13),
+    ],
     products: [
+        // 🏰 Declarative UIKit wrapper inspired by SwiftUI
         .library(name: "UIKitPlus", targets: ["UIKitPlus"]),
-	],
+        ],
     dependencies: [],
     targets: [
-		.target(name: "UIKitPlus", dependencies: [], path: "Classes"),
-	]
+        .target(name: "UIKitPlus", dependencies: [], path: "Classes"),
+//        .testTarget(name: "UIKitPlusTests", dependencies: ["UIKitPlus"]),
+        ]
 )
