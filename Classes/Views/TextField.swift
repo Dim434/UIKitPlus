@@ -8,27 +8,27 @@ open class UTextField: UITextField, AnyDeclarativeProtocol, DeclarativeProtocolI
     public lazy var properties = P()
     lazy var _properties = PropertiesInternal()
     
-    @UISwift.State public var height: CGFloat = 0
-    @UISwift.State public var width: CGFloat = 0
-    @UISwift.State public var top: CGFloat = 0
-    @UISwift.State public var leading: CGFloat = 0
-    @UISwift.State public var left: CGFloat = 0
-    @UISwift.State public var trailing: CGFloat = 0
-    @UISwift.State public var right: CGFloat = 0
-    @UISwift.State public var bottom: CGFloat = 0
-    @UISwift.State public var centerX: CGFloat = 0
-    @UISwift.State public var centerY: CGFloat = 0
+    @UIKitPlus.State public var height: CGFloat = 0
+    @UIKitPlus.State public var width: CGFloat = 0
+    @UIKitPlus.State public var top: CGFloat = 0
+    @UIKitPlus.State public var leading: CGFloat = 0
+    @UIKitPlus.State public var left: CGFloat = 0
+    @UIKitPlus.State public var trailing: CGFloat = 0
+    @UIKitPlus.State public var right: CGFloat = 0
+    @UIKitPlus.State public var bottom: CGFloat = 0
+    @UIKitPlus.State public var centerX: CGFloat = 0
+    @UIKitPlus.State public var centerY: CGFloat = 0
     
-    var __height: UISwift.State<CGFloat> { $height }
-    var __width: UISwift.State<CGFloat> { $width }
-    var __top: UISwift.State<CGFloat> { $top }
-    var __leading: UISwift.State<CGFloat> { $leading }
-    var __left: UISwift.State<CGFloat> { $left }
-    var __trailing: UISwift.State<CGFloat> { $trailing }
-    var __right: UISwift.State<CGFloat> { $right }
-    var __bottom: UISwift.State<CGFloat> { $bottom }
-    var __centerX: UISwift.State<CGFloat> { $centerX }
-    var __centerY: UISwift.State<CGFloat> { $centerY }
+    var __height: UIKitPlus.State<CGFloat> { $height }
+    var __width: UIKitPlus.State<CGFloat> { $width }
+    var __top: UIKitPlus.State<CGFloat> { $top }
+    var __leading: UIKitPlus.State<CGFloat> { $leading }
+    var __left: UIKitPlus.State<CGFloat> { $left }
+    var __trailing: UIKitPlus.State<CGFloat> { $trailing }
+    var __right: UIKitPlus.State<CGFloat> { $right }
+    var __bottom: UIKitPlus.State<CGFloat> { $bottom }
+    var __centerX: UIKitPlus.State<CGFloat> { $centerX }
+    var __centerY: UIKitPlus.State<CGFloat> { $centerY }
     
     fileprivate weak var outsideDelegate: TextFieldDelegate?
     
@@ -56,7 +56,7 @@ open class UTextField: UITextField, AnyDeclarativeProtocol, DeclarativeProtocolI
         text(localized)
     }
     
-    public init<A: AnyString>(_ state: UISwift.State<A>) {
+    public init<A: AnyString>(_ state: UIKitPlus.State<A>) {
         super.init(frame: .zero)
         _setup()
         text(state)
@@ -360,7 +360,7 @@ extension UTextField: _Cleanupable {
 }
 
 extension UTextField: _Colorable {
-    var _colorState: UISwift.State<UIColor> { properties.textColorState }
+    var _colorState: UIKitPlus.State<UIColor> { properties.textColorState }
     
     func _setColor(_ v: UIColor?) {
         textColor = v
@@ -399,7 +399,7 @@ extension UTextField: _Secureable {
 }
 
 extension UTextField: _TextBindable {
-    func _setTextBind<A: AnyString>(_ binding: UISwift.State<A>?) {
+    func _setTextBind<A: AnyString>(_ binding: UIKitPlus.State<A>?) {
         _properties.textChangeListeners.append({ new in
             binding?.wrappedValue = A.make(new)
         })
@@ -428,7 +428,7 @@ extension UTextField: _Typeable {
         _properties.typingInterval = v
     }
     
-    func _observeTypingState(_ v: UISwift.State<Bool>) {
+    func _observeTypingState(_ v: UIKitPlus.State<Bool>) {
         _properties.isTypingState.listen {
             guard v.wrappedValue != $0 else { return }
             v.wrappedValue = $0

@@ -7,27 +7,27 @@ open class UDatePicker: UIDatePicker, AnyDeclarativeProtocol, DeclarativeProtoco
     public lazy var properties = Properties<UDatePicker>()
     lazy var _properties = PropertiesInternal()
     
-    @UISwift.State public var height: CGFloat = 0
-    @UISwift.State public var width: CGFloat = 0
-    @UISwift.State public var top: CGFloat = 0
-    @UISwift.State public var leading: CGFloat = 0
-    @UISwift.State public var left: CGFloat = 0
-    @UISwift.State public var trailing: CGFloat = 0
-    @UISwift.State public var right: CGFloat = 0
-    @UISwift.State public var bottom: CGFloat = 0
-    @UISwift.State public var centerX: CGFloat = 0
-    @UISwift.State public var centerY: CGFloat = 0
+    @UIKitPlus.State public var height: CGFloat = 0
+    @UIKitPlus.State public var width: CGFloat = 0
+    @UIKitPlus.State public var top: CGFloat = 0
+    @UIKitPlus.State public var leading: CGFloat = 0
+    @UIKitPlus.State public var left: CGFloat = 0
+    @UIKitPlus.State public var trailing: CGFloat = 0
+    @UIKitPlus.State public var right: CGFloat = 0
+    @UIKitPlus.State public var bottom: CGFloat = 0
+    @UIKitPlus.State public var centerX: CGFloat = 0
+    @UIKitPlus.State public var centerY: CGFloat = 0
     
-    var __height: UISwift.State<CGFloat> { $height }
-    var __width: UISwift.State<CGFloat> { $width }
-    var __top: UISwift.State<CGFloat> { $top }
-    var __leading: UISwift.State<CGFloat> { $leading }
-    var __left: UISwift.State<CGFloat> { $left }
-    var __trailing: UISwift.State<CGFloat> { $trailing }
-    var __right: UISwift.State<CGFloat> { $right }
-    var __bottom: UISwift.State<CGFloat> { $bottom }
-    var __centerX: UISwift.State<CGFloat> { $centerX }
-    var __centerY: UISwift.State<CGFloat> { $centerY }
+    var __height: UIKitPlus.State<CGFloat> { $height }
+    var __width: UIKitPlus.State<CGFloat> { $width }
+    var __top: UIKitPlus.State<CGFloat> { $top }
+    var __leading: UIKitPlus.State<CGFloat> { $leading }
+    var __left: UIKitPlus.State<CGFloat> { $left }
+    var __trailing: UIKitPlus.State<CGFloat> { $trailing }
+    var __right: UIKitPlus.State<CGFloat> { $right }
+    var __bottom: UIKitPlus.State<CGFloat> { $bottom }
+    var __centerX: UIKitPlus.State<CGFloat> { $centerX }
+    var __centerY: UIKitPlus.State<CGFloat> { $centerY }
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
@@ -63,13 +63,13 @@ open class UDatePicker: UIDatePicker, AnyDeclarativeProtocol, DeclarativeProtoco
     }
     
     @discardableResult
-    public func textColor(_ binding: UISwift.State<UIColor>) -> Self {
+    public func textColor(_ binding: UIKitPlus.State<UIColor>) -> Self {
         binding.listen { [weak self] in self?.textColor($0) }
         return textColor(binding.wrappedValue)
     }
     
     @discardableResult
-    public func textColor(_ binding: UISwift.State<Int>) -> Self {
+    public func textColor(_ binding: UIKitPlus.State<Int>) -> Self {
         binding.listen { [weak self] in self?.textColor($0) }
         return textColor(binding.wrappedValue)
     }
@@ -83,7 +83,7 @@ open class UDatePicker: UIDatePicker, AnyDeclarativeProtocol, DeclarativeProtoco
     }
     
     @discardableResult
-    public func mode(_ binding: UISwift.State<UIDatePicker.Mode>) -> Self {
+    public func mode(_ binding: UIKitPlus.State<UIDatePicker.Mode>) -> Self {
         binding.listen { [weak self] in self?.mode($0) }
         return mode(binding.wrappedValue)
     }
@@ -97,7 +97,7 @@ open class UDatePicker: UIDatePicker, AnyDeclarativeProtocol, DeclarativeProtoco
     }
     
     @discardableResult
-    public func locale(_ binding: UISwift.State<Locale>) -> Self {
+    public func locale(_ binding: UIKitPlus.State<Locale>) -> Self {
         binding.listen { [weak self] in self?.locale($0) }
         return locale(binding.wrappedValue)
     }
@@ -111,7 +111,7 @@ open class UDatePicker: UIDatePicker, AnyDeclarativeProtocol, DeclarativeProtoco
     }
     
     @discardableResult
-    public func calendar(_ binding: UISwift.State<Calendar>) -> Self {
+    public func calendar(_ binding: UIKitPlus.State<Calendar>) -> Self {
         binding.listen { [weak self] in self?.calendar($0) }
         return calendar(binding.wrappedValue)
     }
@@ -125,7 +125,7 @@ open class UDatePicker: UIDatePicker, AnyDeclarativeProtocol, DeclarativeProtoco
     }
     
     @discardableResult
-    public func timeZone(_ binding: UISwift.State<TimeZone>) -> Self {
+    public func timeZone(_ binding: UIKitPlus.State<TimeZone>) -> Self {
         binding.listen { [weak self] in self?.timeZone($0) }
         return timeZone(binding.wrappedValue)
     }
@@ -138,10 +138,10 @@ open class UDatePicker: UIDatePicker, AnyDeclarativeProtocol, DeclarativeProtoco
         return self
     }
     
-    var dateBinding: UISwift.State<Date>?
+    var dateBinding: UIKitPlus.State<Date>?
     
     @discardableResult
-    public func date(_ binding: UISwift.State<Date>, animated: Bool = false) -> Self {
+    public func date(_ binding: UIKitPlus.State<Date>, animated: Bool = false) -> Self {
         dateBinding = binding
         binding.listen { [weak self] in self?.date($0, animated: animated) }
         return date(binding.wrappedValue)
@@ -156,7 +156,7 @@ open class UDatePicker: UIDatePicker, AnyDeclarativeProtocol, DeclarativeProtoco
     }
     
     @discardableResult
-    public func minimumDate(_ binding: UISwift.State<Date>) -> Self {
+    public func minimumDate(_ binding: UIKitPlus.State<Date>) -> Self {
         binding.listen { [weak self] in self?.minimumDate($0) }
         return minimumDate(binding.wrappedValue)
     }
@@ -170,7 +170,7 @@ open class UDatePicker: UIDatePicker, AnyDeclarativeProtocol, DeclarativeProtoco
     }
     
     @discardableResult
-    public func maximumDate(_ binding: UISwift.State<Date>) -> Self {
+    public func maximumDate(_ binding: UIKitPlus.State<Date>) -> Self {
         binding.listen { [weak self] in self?.maximumDate($0) }
         return maximumDate(binding.wrappedValue)
     }
@@ -184,7 +184,7 @@ open class UDatePicker: UIDatePicker, AnyDeclarativeProtocol, DeclarativeProtoco
     }
     
     @discardableResult
-    public func countDownDuration(_ binding: UISwift.State<TimeInterval>) -> Self {
+    public func countDownDuration(_ binding: UIKitPlus.State<TimeInterval>) -> Self {
         binding.listen { [weak self] in self?.countDownDuration($0) }
         return countDownDuration(binding.wrappedValue)
     }
@@ -198,7 +198,7 @@ open class UDatePicker: UIDatePicker, AnyDeclarativeProtocol, DeclarativeProtoco
     }
     
     @discardableResult
-    public func minuteInterval(_ binding: UISwift.State<Int>) -> Self {
+    public func minuteInterval(_ binding: UIKitPlus.State<Int>) -> Self {
         binding.listen { [weak self] in self?.minuteInterval($0) }
         return minuteInterval(binding.wrappedValue)
     }

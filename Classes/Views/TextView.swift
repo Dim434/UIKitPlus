@@ -423,7 +423,7 @@ extension UTextView: _Typeable {
         _properties.typingInterval = v
     }
     
-    func _observeTypingState(_ v: UISwift.State<Bool>) {
+    func _observeTypingState(_ v: UIKitPlus.State<Bool>) {
         _properties.isTypingState.listen {
             guard v.wrappedValue != $0 else { return }
             v.wrappedValue = $0
@@ -435,7 +435,7 @@ extension UTextView: _Typeable {
 }
 
 extension UTextView: _Colorable {
-    var _colorState: UISwift.State<UIColor> { properties.textColorState }
+    var _colorState: UIKitPlus.State<UIColor> { properties.textColorState }
     
     func _setColor(_ v: UIColor?) {
         textColor = v

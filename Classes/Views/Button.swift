@@ -6,37 +6,37 @@ open class UButton: UIButton, AnyDeclarativeProtocol, DeclarativeProtocolInterna
     public lazy var properties = Properties<UButton>()
     lazy var _properties = PropertiesInternal()
     
-    @UISwift.State public var height: CGFloat = 0
-    @UISwift.State public var width: CGFloat = 0
-    @UISwift.State public var top: CGFloat = 0
-    @UISwift.State public var leading: CGFloat = 0
-    @UISwift.State public var left: CGFloat = 0
-    @UISwift.State public var trailing: CGFloat = 0
-    @UISwift.State public var right: CGFloat = 0
-    @UISwift.State public var bottom: CGFloat = 0
-    @UISwift.State public var centerX: CGFloat = 0
-    @UISwift.State public var centerY: CGFloat = 0
+    @UIKitPlus.State public var height: CGFloat = 0
+    @UIKitPlus.State public var width: CGFloat = 0
+    @UIKitPlus.State public var top: CGFloat = 0
+    @UIKitPlus.State public var leading: CGFloat = 0
+    @UIKitPlus.State public var left: CGFloat = 0
+    @UIKitPlus.State public var trailing: CGFloat = 0
+    @UIKitPlus.State public var right: CGFloat = 0
+    @UIKitPlus.State public var bottom: CGFloat = 0
+    @UIKitPlus.State public var centerX: CGFloat = 0
+    @UIKitPlus.State public var centerY: CGFloat = 0
     
-    var __height: UISwift.State<CGFloat> { $height }
-    var __width: UISwift.State<CGFloat> { $width }
-    var __top: UISwift.State<CGFloat> { $top }
-    var __leading: UISwift.State<CGFloat> { $leading }
-    var __left: UISwift.State<CGFloat> { $left }
-    var __trailing: UISwift.State<CGFloat> { $trailing }
-    var __right: UISwift.State<CGFloat> { $right }
-    var __bottom: UISwift.State<CGFloat> { $bottom }
-    var __centerX: UISwift.State<CGFloat> { $centerX }
-    var __centerY: UISwift.State<CGFloat> { $centerY }
+    var __height: UIKitPlus.State<CGFloat> { $height }
+    var __width: UIKitPlus.State<CGFloat> { $width }
+    var __top: UIKitPlus.State<CGFloat> { $top }
+    var __leading: UIKitPlus.State<CGFloat> { $leading }
+    var __left: UIKitPlus.State<CGFloat> { $left }
+    var __trailing: UIKitPlus.State<CGFloat> { $trailing }
+    var __right: UIKitPlus.State<CGFloat> { $right }
+    var __bottom: UIKitPlus.State<CGFloat> { $bottom }
+    var __centerX: UIKitPlus.State<CGFloat> { $centerX }
+    var __centerY: UIKitPlus.State<CGFloat> { $centerY }
     
     // MARK: States
     
-    var titleNormal: UISwift.State<NSAttributedString>?
-    var titleHighlighted: UISwift.State<NSAttributedString>?
-    var titleDisabled: UISwift.State<NSAttributedString>?
-    var titleSelected: UISwift.State<NSAttributedString>?
-    var titleFocused: UISwift.State<NSAttributedString>?
-    var titleApplication: UISwift.State<NSAttributedString>?
-    var titleReserved: UISwift.State<NSAttributedString>?
+    var titleNormal: UIKitPlus.State<NSAttributedString>?
+    var titleHighlighted: UIKitPlus.State<NSAttributedString>?
+    var titleDisabled: UIKitPlus.State<NSAttributedString>?
+    var titleSelected: UIKitPlus.State<NSAttributedString>?
+    var titleFocused: UIKitPlus.State<NSAttributedString>?
+    var titleApplication: UIKitPlus.State<NSAttributedString>?
+    var titleReserved: UIKitPlus.State<NSAttributedString>?
     
     private var titleChangeTransition: UIView.AnimationOptions?
     
@@ -92,7 +92,7 @@ open class UButton: UIButton, AnyDeclarativeProtocol, DeclarativeProtocolInterna
         title(localized)
     }
     
-    public convenience init<A: AnyString>(_ state: UISwift.State<A>) {
+    public convenience init<A: AnyString>(_ state: UIKitPlus.State<A>) {
         self.init(type: .custom)
         _setup()
         title(state)
@@ -214,9 +214,9 @@ open class UButton: UIButton, AnyDeclarativeProtocol, DeclarativeProtocolInterna
     }
     
     @discardableResult
-    public func title<A: AnyString>(_ bind: UISwift.State<A>, _ state: UIControl.State = .normal) -> Self {
+    public func title<A: AnyString>(_ bind: UIKitPlus.State<A>, _ state: UIControl.State = .normal) -> Self {
         setAttributedTitle(bind.wrappedValue.attributedString, for: state)
-        let st: UISwift.State<NSAttributedString>
+        let st: UIKitPlus.State<NSAttributedString>
         switch state {
         case .application:
             st = titleApplication ?? .init(wrappedValue: bind.wrappedValue.attributedString)
@@ -261,13 +261,13 @@ open class UButton: UIButton, AnyDeclarativeProtocol, DeclarativeProtocolInterna
     }
     
     @discardableResult
-    public func color(_ binding: UISwift.State<UIColor>, _ state: UIControl.State = .normal) -> Self {
+    public func color(_ binding: UIKitPlus.State<UIColor>, _ state: UIControl.State = .normal) -> Self {
         binding.listen { [weak self] in self?.color($0, state) }
         return color(binding.wrappedValue, state)
     }
     
     @discardableResult
-    public func color(_ binding: UISwift.State<Int>, _ state: UIControl.State = .normal) -> Self {
+    public func color(_ binding: UIKitPlus.State<Int>, _ state: UIControl.State = .normal) -> Self {
         binding.listen { [weak self] in self?.color($0, state) }
         return color(binding.wrappedValue, state)
     }
@@ -286,7 +286,7 @@ open class UButton: UIButton, AnyDeclarativeProtocol, DeclarativeProtocolInterna
     }
     
     @discardableResult
-    public func image(_ binding: UISwift.State<UIImage>, _ state: UIControl.State = .normal) -> Self {
+    public func image(_ binding: UIKitPlus.State<UIImage>, _ state: UIControl.State = .normal) -> Self {
         binding.listen { [weak self] in self?.image($0, state) }
         return image(binding.wrappedValue, state)
     }
@@ -305,7 +305,7 @@ open class UButton: UIButton, AnyDeclarativeProtocol, DeclarativeProtocolInterna
     }
     
     @discardableResult
-    public func backgroundImage(_ binding: UISwift.State<UIImage>, _ state: UIControl.State = .normal) -> Self {
+    public func backgroundImage(_ binding: UIKitPlus.State<UIImage>, _ state: UIControl.State = .normal) -> Self {
         binding.listen { [weak self] in self?.image($0, state) }
         return backgroundImage(binding.wrappedValue, state)
     }

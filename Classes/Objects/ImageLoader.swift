@@ -14,7 +14,7 @@ fileprivate let cache: NSCache<NSString, NSData> = {
 
 fileprivate let lock = NSLock()
 
-fileprivate let queue = DispatchQueue(label: "com.uiswift.imageloader")
+fileprivate let queue = DispatchQueue(label: "com.UIKitPlus.imageloader")
 
 open class ImageCache {
 	private let fileManager = FileManager()

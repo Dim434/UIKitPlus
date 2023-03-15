@@ -12,27 +12,27 @@ open class USlider: UISlider, AnyDeclarativeProtocol, DeclarativeProtocolInterna
     public lazy var properties = Properties<USlider>()
     lazy var _properties = PropertiesInternal()
     
-    @UISwift.State public var height: CGFloat = 0
-    @UISwift.State public var width: CGFloat = 0
-    @UISwift.State public var top: CGFloat = 0
-    @UISwift.State public var leading: CGFloat = 0
-    @UISwift.State public var left: CGFloat = 0
-    @UISwift.State public var trailing: CGFloat = 0
-    @UISwift.State public var right: CGFloat = 0
-    @UISwift.State public var bottom: CGFloat = 0
-    @UISwift.State public var centerX: CGFloat = 0
-    @UISwift.State public var centerY: CGFloat = 0
+    @UIKitPlus.State public var height: CGFloat = 0
+    @UIKitPlus.State public var width: CGFloat = 0
+    @UIKitPlus.State public var top: CGFloat = 0
+    @UIKitPlus.State public var leading: CGFloat = 0
+    @UIKitPlus.State public var left: CGFloat = 0
+    @UIKitPlus.State public var trailing: CGFloat = 0
+    @UIKitPlus.State public var right: CGFloat = 0
+    @UIKitPlus.State public var bottom: CGFloat = 0
+    @UIKitPlus.State public var centerX: CGFloat = 0
+    @UIKitPlus.State public var centerY: CGFloat = 0
     
-    var __height: UISwift.State<CGFloat> { $height }
-    var __width: UISwift.State<CGFloat> { $width }
-    var __top: UISwift.State<CGFloat> { $top }
-    var __leading: UISwift.State<CGFloat> { $leading }
-    var __left: UISwift.State<CGFloat> { $left }
-    var __trailing: UISwift.State<CGFloat> { $trailing }
-    var __right: UISwift.State<CGFloat> { $right }
-    var __bottom: UISwift.State<CGFloat> { $bottom }
-    var __centerX: UISwift.State<CGFloat> { $centerX }
-    var __centerY: UISwift.State<CGFloat> { $centerY }
+    var __height: UIKitPlus.State<CGFloat> { $height }
+    var __width: UIKitPlus.State<CGFloat> { $width }
+    var __top: UIKitPlus.State<CGFloat> { $top }
+    var __leading: UIKitPlus.State<CGFloat> { $leading }
+    var __left: UIKitPlus.State<CGFloat> { $left }
+    var __trailing: UIKitPlus.State<CGFloat> { $trailing }
+    var __right: UIKitPlus.State<CGFloat> { $right }
+    var __bottom: UIKitPlus.State<CGFloat> { $bottom }
+    var __centerX: UIKitPlus.State<CGFloat> { $centerX }
+    var __centerY: UIKitPlus.State<CGFloat> { $centerY }
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
@@ -78,10 +78,10 @@ open class USlider: UISlider, AnyDeclarativeProtocol, DeclarativeProtocolInterna
         return self
     }
     
-    var bindValue: UISwift.State<Float>?
+    var bindValue: UIKitPlus.State<Float>?
     
     @discardableResult
-    public func value(_ binding: UISwift.State<Float>) -> Self {
+    public func value(_ binding: UIKitPlus.State<Float>) -> Self {
         bindValue = binding
         binding.listen { [weak self] in self?.value($0) }
         return value(binding.wrappedValue)
@@ -94,7 +94,7 @@ open class USlider: UISlider, AnyDeclarativeProtocol, DeclarativeProtocolInterna
     }
     
     @discardableResult
-    public func minimumValue(_ binding: UISwift.State<Float>) -> Self {
+    public func minimumValue(_ binding: UIKitPlus.State<Float>) -> Self {
         binding.listen { [weak self] in self?.minimumValue($0) }
         return minimumValue(binding.wrappedValue)
     }
@@ -106,7 +106,7 @@ open class USlider: UISlider, AnyDeclarativeProtocol, DeclarativeProtocolInterna
     }
     
     @discardableResult
-    public func maximumValue(_ binding: UISwift.State<Float>) -> Self {
+    public func maximumValue(_ binding: UIKitPlus.State<Float>) -> Self {
         binding.listen { [weak self] in self?.maximumValue($0) }
         return maximumValue(binding.wrappedValue)
     }
@@ -118,7 +118,7 @@ open class USlider: UISlider, AnyDeclarativeProtocol, DeclarativeProtocolInterna
     }
     
     @discardableResult
-    public func minimumValueImage(_ binding: UISwift.State<UIImage?>) -> Self {
+    public func minimumValueImage(_ binding: UIKitPlus.State<UIImage?>) -> Self {
         binding.listen { [weak self] in self?.minimumValueImage($0) }
         return minimumValueImage(binding.wrappedValue)
     }
@@ -130,7 +130,7 @@ open class USlider: UISlider, AnyDeclarativeProtocol, DeclarativeProtocolInterna
     }
     
     @discardableResult
-    public func maximumValueImage(_ binding: UISwift.State<UIImage?>) -> Self {
+    public func maximumValueImage(_ binding: UIKitPlus.State<UIImage?>) -> Self {
         binding.listen { [weak self] in self?.maximumValueImage($0) }
         return maximumValueImage(binding.wrappedValue)
     }
@@ -142,7 +142,7 @@ open class USlider: UISlider, AnyDeclarativeProtocol, DeclarativeProtocolInterna
     }
     
     @discardableResult
-    public func isContinuous(_ binding: UISwift.State<Bool>) -> Self {
+    public func isContinuous(_ binding: UIKitPlus.State<Bool>) -> Self {
         binding.listen { [weak self] in self?.isContinuous($0) }
         return isContinuous(binding.wrappedValue)
     }
@@ -160,13 +160,13 @@ open class USlider: UISlider, AnyDeclarativeProtocol, DeclarativeProtocolInterna
     }
     
     @discardableResult
-    public func minimumTrackTintColor(_ binding: UISwift.State<UIColor>) -> Self {
+    public func minimumTrackTintColor(_ binding: UIKitPlus.State<UIColor>) -> Self {
         binding.listen { [weak self] in self?.minimumTrackTintColor($0) }
         return minimumTrackTintColor(binding.wrappedValue)
     }
     
     @discardableResult
-    public func minimumTrackTintColor(_ binding: UISwift.State<Int>) -> Self {
+    public func minimumTrackTintColor(_ binding: UIKitPlus.State<Int>) -> Self {
         binding.listen { [weak self] in self?.minimumTrackTintColor($0) }
         return minimumTrackTintColor(binding.wrappedValue)
     }
@@ -184,13 +184,13 @@ open class USlider: UISlider, AnyDeclarativeProtocol, DeclarativeProtocolInterna
     }
     
     @discardableResult
-    public func maximumTrackTintColor(_ binding: UISwift.State<UIColor>) -> Self {
+    public func maximumTrackTintColor(_ binding: UIKitPlus.State<UIColor>) -> Self {
         binding.listen { [weak self] in self?.maximumTrackTintColor($0) }
         return maximumTrackTintColor(binding.wrappedValue)
     }
     
     @discardableResult
-    public func maximumTrackTintColor(_ binding: UISwift.State<Int>) -> Self {
+    public func maximumTrackTintColor(_ binding: UIKitPlus.State<Int>) -> Self {
         binding.listen { [weak self] in self?.maximumTrackTintColor($0) }
         return maximumTrackTintColor(binding.wrappedValue)
     }
@@ -208,13 +208,13 @@ open class USlider: UISlider, AnyDeclarativeProtocol, DeclarativeProtocolInterna
     }
     
     @discardableResult
-    public func thumbTintColor(_ binding: UISwift.State<UIColor>) -> Self {
+    public func thumbTintColor(_ binding: UIKitPlus.State<UIColor>) -> Self {
         binding.listen { [weak self] in self?.thumbTintColor($0) }
         return thumbTintColor(binding.wrappedValue)
     }
     
     @discardableResult
-    public func thumbTintColor(_ binding: UISwift.State<Int>) -> Self {
+    public func thumbTintColor(_ binding: UIKitPlus.State<Int>) -> Self {
         binding.listen { [weak self] in self?.thumbTintColor($0) }
         return thumbTintColor(binding.wrappedValue)
     }
@@ -232,13 +232,13 @@ open class USlider: UISlider, AnyDeclarativeProtocol, DeclarativeProtocolInterna
     }
     
     @discardableResult
-    public func tintColor(_ binding: UISwift.State<UIColor>) -> Self {
+    public func tintColor(_ binding: UIKitPlus.State<UIColor>) -> Self {
         binding.listen { [weak self] in self?.tintColor($0) }
         return tintColor(binding.wrappedValue)
     }
     
     @discardableResult
-    public func tintColor(_ binding: UISwift.State<Int>) -> Self {
+    public func tintColor(_ binding: UIKitPlus.State<Int>) -> Self {
         binding.listen { [weak self] in self?.tintColor($0) }
         return tintColor(binding.wrappedValue)
     }
@@ -250,7 +250,7 @@ open class USlider: UISlider, AnyDeclarativeProtocol, DeclarativeProtocolInterna
     }
     
     @discardableResult
-    public func thumbImage(_ binding: UISwift.State<UIImage?>) -> Self {
+    public func thumbImage(_ binding: UIKitPlus.State<UIImage?>) -> Self {
         binding.listen { [weak self] in self?.thumbImage($0) }
         return thumbImage(binding.wrappedValue)
     }
