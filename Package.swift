@@ -4,17 +4,17 @@
 import PackageDescription
 
 let package = Package(
-    name: "UISwift",
+    name: "UIKitPlus",
 	platforms: [
 	.iOS("11.0"),
         .macOS(.v10_11),
         .tvOS(.v13)
 	],
     products: [
-        .library(name: "UISwift", targets: ["UISwift"]),
+        .library(name: "UIKitPlus", targets: ["UIKitPlus"]),
 	],
     dependencies: [],
     targets: [
-		.target(name: "UISwift", dependencies: [], path: "Classes"),
+		.target(name: "UIKitPlus", dependencies: [], path: "Classes"),
 	]
 )
